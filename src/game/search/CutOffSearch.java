@@ -1,5 +1,6 @@
 package game.search;
 
+import game.player.Player;
 import game.player.PlayerEnum;
 import game.move.Action;
 import game.board.State;
@@ -7,6 +8,7 @@ import game.evaluation.EvaluationTest;
 import game.heuristic.StateEvaluationAi;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -15,7 +17,7 @@ public class CutOffSearch implements Search {
     private static final int DEPTH_LIMIT = 2;
 
     @Override
-    public Map<State, Action> findStrategy(State initialState, EvaluationTest terminalTest, StateEvaluationAi stateEvaluationAi) {
+    public Map<State, Action> findStrategy(State initialState, EvaluationTest terminalTest, Player player, Player opponent) {
         LinkedHashMap<State, Action> strategy = new LinkedHashMap<>();
 
 
@@ -23,7 +25,7 @@ public class CutOffSearch implements Search {
     }
 
     public int minimaxAtDepth(State state, int depth, EvaluationTest terminalTest) {
-        PlayerEnum maximizingPlayer = state.getPlayer();
+        PlayerEnum maximizingPlayer = state.getPlayer().getPlayerEnum();
         if (terminalTest.isTerminal(state)) {
             return terminalTest.getStateEvaluation(state);
         }
@@ -32,9 +34,9 @@ public class CutOffSearch implements Search {
             // return static evaluation of the position
         }
 
-        if (state.getPlayer() == PlayerEnum.MAX) {
+        if (state.getPlayer().getPlayerEnum() == PlayerEnum.MAX) {
             int maxEval = Integer.MIN_VALUE;
-            Set<Action> applicableActions = state.getApplicableActions();
+            List<Action> applicableActions = state.getApplicableActions();
 
             for (Action action : applicableActions) {
                 State stateAfterAction = state.getActionResult(action);
@@ -44,7 +46,7 @@ public class CutOffSearch implements Search {
             return maxEval;
         } else {
             int minEval = Integer.MAX_VALUE;
-            Set<Action> applicableActions = state.getApplicableActions();
+            List<Action> applicableActions = state.getApplicableActions();
 
             for (Action action : applicableActions) {
                 State stateAfterAction = state.getActionResult(action);
@@ -57,7 +59,7 @@ public class CutOffSearch implements Search {
 
     // when making first call pass alpha to be Integer.MIN and beta to be Integer.MAX
     public int alphaBetaAtDepth(State state, int depth, EvaluationTest terminalTest, int alpha, int beta) {
-        PlayerEnum maximizingPlayer = state.getPlayer();
+        PlayerEnum maximizingPlayer = state.getPlayer().getPlayerEnum();
         if (terminalTest.isTerminal(state)) {
             return terminalTest.getStateEvaluation(state);
         }
@@ -66,9 +68,9 @@ public class CutOffSearch implements Search {
             // return static evaluation of the position
         }
 
-        if (state.getPlayer() == PlayerEnum.MAX) {
+        if (state.getPlayer().getPlayerEnum() == PlayerEnum.MAX) {
             int maxEval = Integer.MIN_VALUE;
-            Set<Action> applicableActions = state.getApplicableActions();
+            List<Action> applicableActions = state.getApplicableActions();
 
             for (Action action : applicableActions) {
                 State stateAfterAction = state.getActionResult(action);
@@ -82,7 +84,7 @@ public class CutOffSearch implements Search {
             return maxEval;
         } else {
             int minEval = Integer.MAX_VALUE;
-            Set<Action> applicableActions = state.getApplicableActions();
+            List<Action> applicableActions = state.getApplicableActions();
 
             for (Action action : applicableActions) {
                 State stateAfterAction = state.getActionResult(action);

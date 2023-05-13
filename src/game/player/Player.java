@@ -2,6 +2,8 @@ package game.player;
 
 import game.heuristic.StateEvaluationAi;
 
+import java.util.Objects;
+
 public class Player {
     PlayerEnum player;
     StateEvaluationAi stateEvaluationAi;
@@ -29,7 +31,7 @@ public class Player {
         this.depthLimit = depthLimit;
     }
 
-    public PlayerEnum getPlayer() {
+    public PlayerEnum getPlayerEnum() {
         return player;
     }
 
@@ -37,4 +39,23 @@ public class Player {
         this.player = player;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Player player1 = (Player) o;
+
+        if (depthLimit != player1.depthLimit) return false;
+        if (player != player1.player) return false;
+        return Objects.equals(stateEvaluationAi, player1.stateEvaluationAi);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = player != null ? player.hashCode() : 0;
+        result = 31 * result + (stateEvaluationAi != null ? stateEvaluationAi.hashCode() : 0);
+        result = 31 * result + depthLimit;
+        return result;
+    }
 }

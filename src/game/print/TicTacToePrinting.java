@@ -36,7 +36,7 @@ public class TicTacToePrinting extends Printing {
 
     private String printRow(int[] gridRow) {
         var row = Arrays.stream(gridRow).sequential()
-                        .mapToObj(num -> num == 1 ? "X" : num == 2 ? "O" : " ")
+                        .mapToObj(num -> num == 1 ? "X" : num == 2 ? "O" : "_")
                                 .toArray();
         return String.format("| %s   %s   %s || %s   %s   %s || %s   %s   %s |%n",
                 row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8]);

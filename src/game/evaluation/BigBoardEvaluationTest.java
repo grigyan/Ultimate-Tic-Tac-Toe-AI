@@ -14,7 +14,7 @@ public class BigBoardEvaluationTest extends EvaluationTest {
 
         // Case 1: someone won
         if (board.isSilhouetteWon()) {
-            PlayerEnum player = board.getPlayer();
+            PlayerEnum player = board.getPlayer().getPlayerEnum();
             stateEvaluationMap.put(state, player == MAX ? -1000 : 1000);
             return true;
         } else if (board.isSilhouetteFull()) {
