@@ -131,22 +131,4 @@ public class MiniMaxDemo {
 
     }
 
-    public static int[][] convertToIntegerArray(String input) {
-        int[][] result = new int[9][9];
-        String[] rows = input.split("\n");
-        for (int i = 0; i < 9; i++) {
-            String[] cells = rows[i].split("\\|");
-            for (int j = 1; j < 10; j++) {
-                String value = cells[j].trim();
-                if (value.equals("X")) {
-                    result[i][j-1] = 1;
-                } else if (value.equals("O")) {
-                    result[i][j-1] = 2;
-                } else {
-                    result[i][j-1] = 0;
-                }
-            }
-        }
-        return result;
-    }
 }
