@@ -3,7 +3,6 @@ package game.search;
 import game.move.Action;
 import game.board.State;
 import game.evaluation.EvaluationTest;
-import game.heuristic.StateEvaluationAi;
 import game.player.Player;
 
 import java.util.Map;

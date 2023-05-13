@@ -5,12 +5,10 @@ import game.player.PlayerEnum;
 import game.move.Action;
 import game.board.State;
 import game.evaluation.EvaluationTest;
-import game.heuristic.StateEvaluationAi;
 
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class CutOffSearch implements Search {
     private int noOfStates = 0;

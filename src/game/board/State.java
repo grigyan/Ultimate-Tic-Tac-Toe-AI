@@ -5,7 +5,6 @@ import game.player.Player;
 import game.move.Move;
 
 import java.util.List;
-import java.util.Set;
 
 public interface State {
     Player getPlayer();

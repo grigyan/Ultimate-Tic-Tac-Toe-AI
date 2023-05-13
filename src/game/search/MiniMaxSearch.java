@@ -5,8 +5,6 @@ import game.move.Action;
 import game.board.BigBoard;
 import game.board.State;
 import game.evaluation.EvaluationTest;
-import game.heuristic.StateEvaluationAi;
-import game.move.Move;
 import game.player.Player;
 
 import java.util.*;
@@ -39,20 +37,18 @@ public class MiniMaxSearch implements Search {
         }
 
         int bestMoveValue = Integer.MIN_VALUE;
-        List<Action> bestActions = new ArrayList<>();
+        Action bestAction = null;
 
         for (Action action : currentState.getApplicableActions()) {
             State successor = currentState.getActionResult(action);
             noOfStates += 1;
 
             int newValue = minValue(successor, terminalTest, opponent, player, strategy, depth + 1);     //call to min()
-            if (newValue >= bestMoveValue) {
-                bestActions.add(action);
+            if (newValue > bestMoveValue) {
+                bestAction = action;
                 bestMoveValue = newValue;
             }
         }
-
-        Action bestAction = bestActions.get(random.nextInt(bestActions.size())); // choose random best action from available best actions
 
         strategy.put(currentState, bestAction);
         return bestMoveValue;
@@ -69,20 +65,18 @@ public class MiniMaxSearch implements Search {
         }
 
         int bestMoveValue = Integer.MAX_VALUE;
-        List<Action> bestActions = new ArrayList<>();
+        Action bestAction = null;
 
         for (Action action : currentState.getApplicableActions()) {
             State successor = currentState.getActionResult(action);
             noOfStates += 1;
 
             int newValue = maxValue(successor, terminalTest, opponent, player, strategy, depth + 1);     // call to max()
-            if (newValue <= bestMoveValue) {
+            if (newValue < bestMoveValue) {
                 bestMoveValue = newValue;
-                bestActions.add(action);
+                bestAction = action;
             }
         }
-
-        Action bestAction = bestActions.get(random.nextInt(bestActions.size())); // choose random best action from available best actions
 
         strategy.put(currentState, bestAction);
         return bestMoveValue;
