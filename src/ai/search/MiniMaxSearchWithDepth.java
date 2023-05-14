@@ -14,12 +14,12 @@ import java.util.*;
 
 import static game.player.PlayerEnum.MAX;
 
-public class MiniMaxSearch implements Search {
+public class MiniMaxSearchWithDepth implements Search {
     private int noOfStates = 0;
     private Random random = new Random();
     private final Player player;
 
-    public MiniMaxSearch(Player player) {
+    public MiniMaxSearchWithDepth(Player player) {
         this.player = player;
     }
 

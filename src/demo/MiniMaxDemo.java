@@ -4,7 +4,7 @@ import game.move.Action;
 import game.player.Player;
 import game.board.State;
 import game.evaluation.EvaluationTest;
-import ai.search.MiniMaxSearch;
+import ai.search.MiniMaxSearchWithDepth;
 import game.move.Move;
 import game.print.TicTacToePrinting;
 import game.board.BigBoard;
@@ -32,13 +32,12 @@ public class MiniMaxDemo {
 
         BigBoard midChatGpt = new BigBoard(easyAiMax, easyAiMin, oneMoveBeforeWinning2, new Move(8, 3));
         BigBoard midGameBoard = new BigBoard(mediumAiMax, easyAiMin, midGame, new Move(6, 4));
+
         BigBoard initialBoard = new BigBoard(mediumAiMax, mediumAiMin);
-
-
         BigBoard currentBoard = initialBoard;
 
         for (int i = 1; i <= 100; i++)
-            gamePlay(currentBoard);
+            gamePlay(currentBoard, false);
 
 
 
@@ -56,30 +55,40 @@ public class MiniMaxDemo {
     }
 
 
-    public static void gamePlay(State state) {
+    public static void gamePlay(State state, boolean print) {
         EvaluationTest evaluationTest = new BigBoardEvaluationTest();
         TicTacToePrinting ticTacToePrinting = new TicTacToePrinting();
 
-//        System.out.println("Last move was in: " + state.getLastMove().getRow() + " " + state.getLastMove().getColumn());
-//        System.out.println("State now: ");
-//        ticTacToePrinting.print(state);
+        if (print) {
+            System.out.println("Last move was in: " + state.getLastMove().getRow() + " " + state.getLastMove().getColumn());
+            System.out.println("State now: ");
+            ticTacToePrinting.print(state);
+        }
+
         while(!evaluationTest.isTerminal(state)) {
             if (state.getPlayer().getPlayerEnum() == MAX) { // MAX to play
-                Action nextAction = new MiniMaxSearch(state.getPlayer())
+                Action nextAction = new MiniMaxSearchWithDepth(state.getPlayer())
                         .findStrategy(state, evaluationTest, MAX).get(state);
                 state = state.getActionResult(nextAction);
-                int row = state.getLastMove().getRow() + 1;
-                int col = state.getLastMove().getColumn() + 1;
-//                System.out.println("X in (" + row  + ", " + col + ")");
+                if (print) {
+                    int row = state.getLastMove().getRow() + 1;
+                    int col = state.getLastMove().getColumn() + 1;
+                    System.out.println("X in (" + row  + ", " + col + ")");
+                }
             } else { // MIN to play
-                Action nextAction = new MiniMaxSearch(state.getPlayer())
+                Action nextAction = new MiniMaxSearchWithDepth(state.getPlayer())
                         .findStrategy(state, evaluationTest, MIN).get(state);
                 state = state.getActionResult(nextAction);
-                int row = state.getLastMove().getRow() + 1;
-                int col = state.getLastMove().getColumn() + 1;
-//                System.out.println("O in (" + row  + ", " + col + ")");
+                if (print) {
+                    int row = state.getLastMove().getRow() + 1;
+                    int col = state.getLastMove().getColumn() + 1;
+                    System.out.println("O in (" + row  + ", " + col + ")");
+                }
             }
-//            ticTacToePrinting.print(state);
+            if (print) {
+                ticTacToePrinting.print(state);
+
+            }
         }
 
         BigBoard board = (BigBoard) state;
@@ -89,10 +98,14 @@ public class MiniMaxDemo {
             } else {
                 xWon++;
             }
-//            System.out.println(board.getPlayer().getPlayerEnum() == MAX ? "O won the game" : "X won the game");
+            if (print) {
+                System.out.println(board.getPlayer().getPlayerEnum() == MAX ? "O won the game" : "X won the game");
+            }
         } else {
             draw++;
-//            System.out.println("Game ended with a draw");
+            if (print) {
+                System.out.println("Game ended with a draw");
+            }
         }
 
     }
