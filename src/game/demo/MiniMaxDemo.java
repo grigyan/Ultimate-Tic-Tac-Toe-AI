@@ -78,7 +78,6 @@ public class MiniMaxDemo {
 
 
         BigBoard currentBoard = initialBoard;
-//        System.out.println("Last move was in: " + currentBoard.getLastMove().getRow() + " " + currentBoard.getLastMove().getColumn());
 
         for (int i = 1; i <= 50; i++)
             gamePlay(currentBoard);
@@ -102,7 +101,7 @@ public class MiniMaxDemo {
         EvaluationTest evaluationTest = new BigBoardEvaluationTest();
         TicTacToePrinting ticTacToePrinting = new TicTacToePrinting();
 
-
+        System.out.println("Last move was in: " + state.getLastMove().getRow() + " " + state.getLastMove().getColumn());
 //        System.out.println("State now: ");
 //        ticTacToePrinting.print(state);
         while(!evaluationTest.isTerminal(state)) {

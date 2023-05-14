@@ -1,6 +1,8 @@
 package game.search;
 
 
+import ds.MaxHeapPriorityQueue;
+import ds.MinHeapPriorityQueue;
 import game.move.Action;
 import game.board.BigBoard;
 import game.board.State;
@@ -50,7 +52,7 @@ public class MiniMaxSearch implements Search {
         }
 
         int bestMoveValue = Integer.MIN_VALUE;
-        Map<Action, Integer> actionToEvaluationMap = new HashMap<>();
+        MaxHeapPriorityQueue<Integer, Action> maxActions = new MaxHeapPriorityQueue<>();
 
         for (Action action : currentState.getApplicableActions()) {
             State successor = currentState.getActionResult(action);
@@ -58,14 +60,15 @@ public class MiniMaxSearch implements Search {
 
             int newValue = minValue(successor, terminalTest, strategy, depth + 1);     //call to min()
             if (newValue >= bestMoveValue) {
-                actionToEvaluationMap.put(action, newValue);
+                maxActions.insert(newValue, action);
                 bestMoveValue = newValue;
             }
         }
-        Action bestAction = getBestActionFromMap(actionToEvaluationMap, MAX);
 
-        strategy.put(currentState, bestAction);
-        return bestMoveValue;
+        ds.Entry<Integer, Action> bestMove = maxActions.removeMin();
+
+        strategy.put(currentState, bestMove.getValue());
+        return bestMove.getKey();
     }
 
     private int minValue(State currentState, EvaluationTest terminalTest,
@@ -79,7 +82,8 @@ public class MiniMaxSearch implements Search {
         }
 
         int bestMoveValue = Integer.MAX_VALUE;
-        Map<Action, Integer> actionToEvaluationMap = new HashMap<>();
+        MinHeapPriorityQueue<Integer, Action> minActions = new MinHeapPriorityQueue<>();
+
 
         for (Action action : currentState.getApplicableActions()) {
             State successor = currentState.getActionResult(action);
@@ -87,14 +91,14 @@ public class MiniMaxSearch implements Search {
 
             int newValue = maxValue(successor, terminalTest, strategy, depth + 1);     // call to max()
             if (newValue <= bestMoveValue) {
-                actionToEvaluationMap.put(action, newValue);
+                minActions.insert(newValue, action);
                 bestMoveValue = newValue;
             }
         }
-        Action bestAction = getBestActionFromMap(actionToEvaluationMap, MIN);
+        ds.Entry<Integer, Action> bestMove = minActions.removeMin();
 
-        strategy.put(currentState, bestAction);
-        return bestMoveValue;
+        strategy.put(currentState, bestMove.getValue());
+        return bestMove.getKey();
     }
 
     private Action getBestActionFromMap(Map<Action, Integer> actionToEvaluationMap, PlayerEnum player) {
@@ -129,5 +133,7 @@ public class MiniMaxSearch implements Search {
 
         return actions.get(random.nextInt(actions.size()));
     }
+
+
 
 }
