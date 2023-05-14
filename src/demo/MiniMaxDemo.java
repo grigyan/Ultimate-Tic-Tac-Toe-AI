@@ -4,7 +4,7 @@ import game.move.Action;
 import game.player.Player;
 import game.board.State;
 import game.evaluation.EvaluationTest;
-import ai.search.MiniMaxSearchWithDepth;
+import ai.search.MiniMax;
 import game.move.Move;
 import game.print.TicTacToePrinting;
 import game.board.BigBoard;
@@ -67,7 +67,7 @@ public class MiniMaxDemo {
 
         while(!evaluationTest.isTerminal(state)) {
             if (state.getPlayer().getPlayerEnum() == MAX) { // MAX to play
-                Action nextAction = new MiniMaxSearchWithDepth(state.getPlayer())
+                Action nextAction = new MiniMax(state.getPlayer())
                         .findStrategy(state, evaluationTest, MAX).get(state);
                 state = state.getActionResult(nextAction);
                 if (print) {
@@ -76,7 +76,7 @@ public class MiniMaxDemo {
                     System.out.println("X in (" + row  + ", " + col + ")");
                 }
             } else { // MIN to play
-                Action nextAction = new MiniMaxSearchWithDepth(state.getPlayer())
+                Action nextAction = new MiniMax(state.getPlayer())
                         .findStrategy(state, evaluationTest, MIN).get(state);
                 state = state.getActionResult(nextAction);
                 if (print) {

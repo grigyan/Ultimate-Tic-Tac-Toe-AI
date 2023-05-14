@@ -14,12 +14,12 @@ import java.util.*;
 
 import static game.player.PlayerEnum.MAX;
 
-public class MiniMaxSearchWithDepth implements Search {
+public class AlphaBeta implements Search {
     private int noOfStates = 0;
     private Random random = new Random();
     private final Player player;
 
-    public MiniMaxSearchWithDepth(Player player) {
+    public AlphaBeta(Player player) {
         this.player = player;
     }
 
@@ -32,16 +32,16 @@ public class MiniMaxSearchWithDepth implements Search {
     public Map<State, Action> findStrategy(State initialState, EvaluationTest terminalTest, PlayerEnum playerEnum) {
         HashMap<State, Action> strategy = new HashMap<>();
         if (playerEnum == MAX) {
-            maxValue(initialState, terminalTest, strategy, 0);
+            maxValue(initialState, terminalTest, strategy, 0, Integer.MIN_VALUE, Integer.MAX_VALUE);
         } else {
-            minValue(initialState, terminalTest, strategy, 0);
+            minValue(initialState, terminalTest, strategy, 0, Integer.MIN_VALUE, Integer.MAX_VALUE);
         }
 
         return strategy;
     }
 
     private int maxValue(State currentState, EvaluationTest terminalTest,
-                         HashMap<State, Action> strategy, int depth) {
+                         HashMap<State, Action> strategy, int depth, int alpha, int beta) {
         if (terminalTest.isTerminal(currentState)) {
             return terminalTest.getStateEvaluation(currentState);
         }
@@ -57,11 +57,15 @@ public class MiniMaxSearchWithDepth implements Search {
             State successor = currentState.getActionResult(action);
             noOfStates += 1;
 
-            int newValue = minValue(successor, terminalTest, strategy, depth + 1);     //call to min()
+            int newValue = minValue(successor, terminalTest, strategy, depth + 1, alpha, beta);     //call to min()
             if (newValue >= bestMoveValue) {
                 maxActions.insert(newValue, action);
                 bestMoveValue = newValue;
             }
+            if (bestMoveValue >= beta) {
+                return bestMoveValue;
+            }
+            alpha = Math.max(alpha, bestMoveValue);
         }
 
         priorityQueue.Entry<Integer, Action> bestMove = maxActions.removeMin();
@@ -71,7 +75,7 @@ public class MiniMaxSearchWithDepth implements Search {
     }
 
     private int minValue(State currentState, EvaluationTest terminalTest,
-                         HashMap<State, Action> strategy, int depth) {
+                         HashMap<State, Action> strategy, int depth, int alpha, int beta) {
         if (terminalTest.isTerminal(currentState)) {
             return terminalTest.getStateEvaluation(currentState);
         }
@@ -83,17 +87,21 @@ public class MiniMaxSearchWithDepth implements Search {
         int bestMoveValue = Integer.MAX_VALUE;
         MinHeapPriorityQueue<Integer, Action> minActions = new MinHeapPriorityQueue<>();
 
-
         for (Action action : currentState.getApplicableActions()) {
             State successor = currentState.getActionResult(action);
             noOfStates += 1;
 
-            int newValue = maxValue(successor, terminalTest, strategy, depth + 1);     // call to max()
+            int newValue = maxValue(successor, terminalTest, strategy, depth + 1, alpha, beta);     // call to max()
             if (newValue <= bestMoveValue) {
                 minActions.insert(newValue, action);
                 bestMoveValue = newValue;
             }
+            if (bestMoveValue <= alpha) {
+                return  bestMoveValue;
+            }
+            beta = Math.min(beta, bestMoveValue);
         }
+
         priorityQueue.Entry<Integer, Action> bestMove = minActions.removeMin();
 
         strategy.put(currentState, bestMove.getValue());
