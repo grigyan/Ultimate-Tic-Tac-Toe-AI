@@ -15,7 +15,7 @@ public class CutOffSearch implements Search {
     private static final int DEPTH_LIMIT = 2;
 
     @Override
-    public Map<State, Action> findStrategy(State initialState, EvaluationTest terminalTest, Player player, Player opponent) {
+    public Map<State, Action> findStrategy(State initialState, EvaluationTest terminalTest, PlayerEnum playerEnum) {
         LinkedHashMap<State, Action> strategy = new LinkedHashMap<>();
 
 

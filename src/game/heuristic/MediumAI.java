@@ -5,7 +5,7 @@ import game.move.Action;
 import game.move.Move;
 import game.board.BigBoard;
 
-public class MediumAi implements StateEvaluationAi {
+public class MediumAI implements StateEvaluationAi {
     public int evaluateBoardAfterMove(BigBoard board) {
         int currentPlayer = board.getPlayer().getPlayerEnum() == PlayerEnum.MAX ? 2 : 1;
         int opponent = currentPlayer == 1 ? 2 : 1;

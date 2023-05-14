@@ -6,13 +6,21 @@ import game.board.BigBoard;
 import game.board.State;
 import game.evaluation.EvaluationTest;
 import game.player.Player;
+import game.player.PlayerEnum;
 
 import java.util.*;
 
+import static game.player.PlayerEnum.MAX;
+import static game.player.PlayerEnum.MIN;
+
 public class MiniMaxSearch implements Search {
     private int noOfStates = 0;
-    private static final int DEPTH_LIMIT = 7;
     private Random random = new Random();
+    private final Player player;
+
+    public MiniMaxSearch(Player player) {
+        this.player = player;
+    }
 
     @Override
     public int getNoOfStatesGenerated() {
@@ -20,13 +28,18 @@ public class MiniMaxSearch implements Search {
     }
 
     @Override
-    public Map<State, Action> findStrategy(State initialState, EvaluationTest terminalTest, Player player, Player opponent) {
+    public Map<State, Action> findStrategy(State initialState, EvaluationTest terminalTest, PlayerEnum playerEnum) {
         HashMap<State, Action> strategy = new HashMap<>();
-        maxValue(initialState, terminalTest, player, opponent, strategy, 0);
+        if (playerEnum == MAX) {
+            maxValue(initialState, terminalTest, strategy, 0);
+        } else {
+            minValue(initialState, terminalTest, strategy, 0);
+        }
+
         return strategy;
     }
 
-    private int maxValue(State currentState, EvaluationTest terminalTest, Player player, Player opponent,
+    private int maxValue(State currentState, EvaluationTest terminalTest,
                          HashMap<State, Action> strategy, int depth) {
         if (terminalTest.isTerminal(currentState)) {
             return terminalTest.getStateEvaluation(currentState);
@@ -37,24 +50,25 @@ public class MiniMaxSearch implements Search {
         }
 
         int bestMoveValue = Integer.MIN_VALUE;
-        Action bestAction = null;
+        Map<Action, Integer> actionToEvaluationMap = new HashMap<>();
 
         for (Action action : currentState.getApplicableActions()) {
             State successor = currentState.getActionResult(action);
             noOfStates += 1;
 
-            int newValue = minValue(successor, terminalTest, opponent, player, strategy, depth + 1);     //call to min()
-            if (newValue > bestMoveValue) {
-                bestAction = action;
+            int newValue = minValue(successor, terminalTest, strategy, depth + 1);     //call to min()
+            if (newValue >= bestMoveValue) {
+                actionToEvaluationMap.put(action, newValue);
                 bestMoveValue = newValue;
             }
         }
+        Action bestAction = getBestActionFromMap(actionToEvaluationMap, MAX);
 
         strategy.put(currentState, bestAction);
         return bestMoveValue;
     }
 
-    private int minValue(State currentState, EvaluationTest terminalTest, Player player, Player opponent,
+    private int minValue(State currentState, EvaluationTest terminalTest,
                          HashMap<State, Action> strategy, int depth) {
         if (terminalTest.isTerminal(currentState)) {
             return terminalTest.getStateEvaluation(currentState);
@@ -65,21 +79,55 @@ public class MiniMaxSearch implements Search {
         }
 
         int bestMoveValue = Integer.MAX_VALUE;
-        Action bestAction = null;
+        Map<Action, Integer> actionToEvaluationMap = new HashMap<>();
 
         for (Action action : currentState.getApplicableActions()) {
             State successor = currentState.getActionResult(action);
             noOfStates += 1;
 
-            int newValue = maxValue(successor, terminalTest, opponent, player, strategy, depth + 1);     // call to max()
-            if (newValue < bestMoveValue) {
+            int newValue = maxValue(successor, terminalTest, strategy, depth + 1);     // call to max()
+            if (newValue <= bestMoveValue) {
+                actionToEvaluationMap.put(action, newValue);
                 bestMoveValue = newValue;
-                bestAction = action;
             }
         }
+        Action bestAction = getBestActionFromMap(actionToEvaluationMap, MIN);
 
         strategy.put(currentState, bestAction);
         return bestMoveValue;
+    }
+
+    private Action getBestActionFromMap(Map<Action, Integer> actionToEvaluationMap, PlayerEnum player) {
+        List<Action> actions = new ArrayList<>();
+        if (player == MAX) {
+            int max = Integer.MIN_VALUE;
+            for (Map.Entry<Action, Integer> entry : actionToEvaluationMap.entrySet()) {
+                if (entry.getValue() > max) {
+                    max = entry.getValue();
+                }
+            }
+
+            for (Map.Entry<Action, Integer> entry : actionToEvaluationMap.entrySet()) {
+                if (entry.getValue() == max) {
+                    actions.add(entry.getKey());
+                }
+            }
+        } else {
+            int min = Integer.MAX_VALUE;
+            for (Map.Entry<Action, Integer> entry : actionToEvaluationMap.entrySet()) {
+                if (entry.getValue() < min) {
+                    min = entry.getValue();
+                }
+            }
+
+            for (Map.Entry<Action, Integer> entry : actionToEvaluationMap.entrySet()) {
+                if (entry.getValue() == min) {
+                    actions.add(entry.getKey());
+                }
+            }
+        }
+
+        return actions.get(random.nextInt(actions.size()));
     }
 
 }
