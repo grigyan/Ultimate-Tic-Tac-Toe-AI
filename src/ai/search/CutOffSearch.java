@@ -1,6 +1,5 @@
-package game.search;
+package ai.search;
 
-import game.player.Player;
 import game.player.PlayerEnum;
 import game.move.Action;
 import game.board.State;

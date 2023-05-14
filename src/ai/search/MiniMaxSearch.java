@@ -1,8 +1,8 @@
-package game.search;
+package ai.search;
 
 
-import ds.MaxHeapPriorityQueue;
-import ds.MinHeapPriorityQueue;
+import priorityQueue.MaxHeapPriorityQueue;
+import priorityQueue.MinHeapPriorityQueue;
 import game.move.Action;
 import game.board.BigBoard;
 import game.board.State;
@@ -13,7 +13,6 @@ import game.player.PlayerEnum;
 import java.util.*;
 
 import static game.player.PlayerEnum.MAX;
-import static game.player.PlayerEnum.MIN;
 
 public class MiniMaxSearch implements Search {
     private int noOfStates = 0;
@@ -65,7 +64,7 @@ public class MiniMaxSearch implements Search {
             }
         }
 
-        ds.Entry<Integer, Action> bestMove = maxActions.removeMin();
+        priorityQueue.Entry<Integer, Action> bestMove = maxActions.removeMin();
 
         strategy.put(currentState, bestMove.getValue());
         return bestMove.getKey();
@@ -95,7 +94,7 @@ public class MiniMaxSearch implements Search {
                 bestMoveValue = newValue;
             }
         }
-        ds.Entry<Integer, Action> bestMove = minActions.removeMin();
+        priorityQueue.Entry<Integer, Action> bestMove = minActions.removeMin();
 
         strategy.put(currentState, bestMove.getValue());
         return bestMove.getKey();

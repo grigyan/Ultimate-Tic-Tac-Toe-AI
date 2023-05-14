@@ -1,6 +1,6 @@
 package game.player;
 
-import game.heuristic.StateEvaluationAi;
+import ai.heuristic.StateEvaluationAi;
 
 import java.util.Objects;
 

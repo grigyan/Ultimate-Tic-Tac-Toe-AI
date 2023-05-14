@@ -1,4 +1,4 @@
-package game.heuristic;
+package ai.heuristic;
 
 import game.board.BigBoard;
 
