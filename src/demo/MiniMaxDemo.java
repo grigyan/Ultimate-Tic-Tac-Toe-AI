@@ -6,7 +6,6 @@ import game.player.Player;
 import game.board.State;
 import game.evaluation.EvaluationTest;
 import ai.search.MiniMax;
-import game.move.Move;
 import game.print.TicTacToePrinting;
 import game.board.BigBoard;
 import game.evaluation.BigBoardEvaluationTest;
@@ -30,9 +29,6 @@ public class MiniMaxDemo {
 
         Player easyAiMax = new Player(MAX, new EasyAI(), 1);
         Player easyAiMin = new Player(MIN, new EasyAI(), 1);
-
-        BigBoard midChatGpt = new BigBoard(easyAiMax, easyAiMin, oneMoveBeforeWinning2, new Move(8, 3));
-        BigBoard midGameBoard = new BigBoard(mediumAiMax, easyAiMin, midGame, new Move(6, 4));
 
         BigBoard initialBoard = new BigBoard(mediumAiMax, mediumAiMin);
 
@@ -128,19 +124,6 @@ public class MiniMaxDemo {
             {1, 0, 0, 0, 0, 0, 0, 2, 1}
     };
 
-    // last move by O in 8, 3
-    // one move away from winning
-    static int[][] oneMoveBeforeWinning2 = {
-            {1,0,2,0,0,2,2,0,2},
-            {0,1,1,1,1,0,0,1,0},
-            {2,0,1,0,2,2,1,1,1},
-            {0,1,0,2,1,1,2,1,1},
-            {2,0,0,2,2,1,0,0,2},
-            {2,1,0,0,0,2,0,0,2},
-            {1,2,2,1,2,0,2,0,1},
-            {1,2,0,0,1,2,0,2,1},
-            {1,0,0,2,0,0,0,2,1}};
-
     // One Move Before winning state
     // last move -> 0 2
     // winning move -> 0,7
@@ -155,5 +138,7 @@ public class MiniMaxDemo {
             {1, 0, 0, 0, 1, 2, 0, 2, 0},
             {1, 0, 0, 0, 0, 0, 0, 2, 1}
     };
+    //    BigBoard midGameBoard = new BigBoard(mediumAiMax, easyAiMin, midGame, new Move(6, 4));
+
 
 }
