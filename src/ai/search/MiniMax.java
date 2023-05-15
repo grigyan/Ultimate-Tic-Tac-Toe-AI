@@ -16,7 +16,7 @@ import static game.player.PlayerEnum.MAX;
 
 public class MiniMax implements Search {
     private int noOfStates = 0;
-    private Random random = new Random();
+    private final Random random = new Random();
     private final Player player;
 
     public MiniMax(Player player) {
@@ -47,7 +47,7 @@ public class MiniMax implements Search {
         }
 
         if (depth == player.getDepthLimit()) {
-            return player.getStateEvaluationAi().evaluateBoardAfterMove((BigBoard) currentState);
+            return player.getStateEvaluationAi().evaluateBoardAfterLastMove((BigBoard) currentState);
         }
 
         int bestMoveValue = Integer.MIN_VALUE;
@@ -77,7 +77,7 @@ public class MiniMax implements Search {
         }
 
         if (depth == player.getDepthLimit()) {
-            return player.getStateEvaluationAi().evaluateBoardAfterMove((BigBoard) currentState) * (-1);
+            return player.getStateEvaluationAi().evaluateBoardAfterLastMove((BigBoard) currentState) * (-1);
         }
 
         int bestMoveValue = Integer.MAX_VALUE;
@@ -99,40 +99,5 @@ public class MiniMax implements Search {
         strategy.put(currentState, bestMove.getValue());
         return bestMove.getKey();
     }
-
-    private Action getBestActionFromMap(Map<Action, Integer> actionToEvaluationMap, PlayerEnum player) {
-        List<Action> actions = new ArrayList<>();
-        if (player == MAX) {
-            int max = Integer.MIN_VALUE;
-            for (Map.Entry<Action, Integer> entry : actionToEvaluationMap.entrySet()) {
-                if (entry.getValue() > max) {
-                    max = entry.getValue();
-                }
-            }
-
-            for (Map.Entry<Action, Integer> entry : actionToEvaluationMap.entrySet()) {
-                if (entry.getValue() == max) {
-                    actions.add(entry.getKey());
-                }
-            }
-        } else {
-            int min = Integer.MAX_VALUE;
-            for (Map.Entry<Action, Integer> entry : actionToEvaluationMap.entrySet()) {
-                if (entry.getValue() < min) {
-                    min = entry.getValue();
-                }
-            }
-
-            for (Map.Entry<Action, Integer> entry : actionToEvaluationMap.entrySet()) {
-                if (entry.getValue() == min) {
-                    actions.add(entry.getKey());
-                }
-            }
-        }
-
-        return actions.get(random.nextInt(actions.size()));
-    }
-
-
 
 }

@@ -47,7 +47,7 @@ public class AlphaBeta implements Search {
         }
 
         if (depth == player.getDepthLimit()) {
-            return player.getStateEvaluationAi().evaluateBoardAfterMove((BigBoard) currentState);
+            return player.getStateEvaluationAi().evaluateBoardAfterLastMove((BigBoard) currentState);
         }
 
         int bestMoveValue = Integer.MIN_VALUE;
@@ -81,7 +81,7 @@ public class AlphaBeta implements Search {
         }
 
         if (depth == player.getDepthLimit()) {
-            return player.getStateEvaluationAi().evaluateBoardAfterMove((BigBoard) currentState) * (-1);
+            return player.getStateEvaluationAi().evaluateBoardAfterLastMove((BigBoard) currentState) * (-1);
         }
 
         int bestMoveValue = Integer.MAX_VALUE;

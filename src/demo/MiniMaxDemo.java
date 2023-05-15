@@ -1,5 +1,6 @@
 package demo;
 
+import ai.search.Search;
 import game.move.Action;
 import game.player.Player;
 import game.board.State;
@@ -34,12 +35,16 @@ public class MiniMaxDemo {
         BigBoard midGameBoard = new BigBoard(mediumAiMax, easyAiMin, midGame, new Move(6, 4));
 
         BigBoard initialBoard = new BigBoard(mediumAiMax, mediumAiMin);
-        BigBoard currentBoard = initialBoard;
 
-        for (int i = 1; i <= 100; i++)
-            gamePlay(currentBoard, false);
+        for (int i = 1; i <= 10; i++)
+            gamePlay(initialBoard, new MiniMax(initialBoard.getPlayer()), false);
 
-
+        System.out.println("X won " + xWon);
+        System.out.println("O won " + oWon);
+        System.out.println("Draw " + draw);
+        xWon = 0;
+        oWon = 0;
+        draw = 0;
 
         // TODO: - make available actions to be stored in a List instead of Set
         // TODO: - create absolutely random ai
@@ -48,14 +53,10 @@ public class MiniMaxDemo {
         // TODO: - create Player class to store depth limit, state score and player type
         // TODO: - keep track of number of moves for each game
         // TODO: -
-
-        System.out.println("X won " + xWon);
-        System.out.println("O won " + oWon);
-        System.out.println("Draw " + draw);
     }
 
 
-    public static void gamePlay(State state, boolean print) {
+    public static void gamePlay(State state, Search search, boolean print) {
         EvaluationTest evaluationTest = new BigBoardEvaluationTest();
         TicTacToePrinting ticTacToePrinting = new TicTacToePrinting();
 
@@ -67,18 +68,20 @@ public class MiniMaxDemo {
 
         while(!evaluationTest.isTerminal(state)) {
             if (state.getPlayer().getPlayerEnum() == MAX) { // MAX to play
-                Action nextAction = new MiniMax(state.getPlayer())
+                Action nextAction = search
                         .findStrategy(state, evaluationTest, MAX).get(state);
                 state = state.getActionResult(nextAction);
+
                 if (print) {
                     int row = state.getLastMove().getRow() + 1;
                     int col = state.getLastMove().getColumn() + 1;
                     System.out.println("X in (" + row  + ", " + col + ")");
                 }
             } else { // MIN to play
-                Action nextAction = new MiniMax(state.getPlayer())
+                Action nextAction = search
                         .findStrategy(state, evaluationTest, MIN).get(state);
                 state = state.getActionResult(nextAction);
+
                 if (print) {
                     int row = state.getLastMove().getRow() + 1;
                     int col = state.getLastMove().getColumn() + 1;
@@ -107,7 +110,8 @@ public class MiniMaxDemo {
                 System.out.println("Game ended with a draw");
             }
         }
-
+        int totalStates = search.getNoOfStatesGenerated();
+        System.out.println("Total number of states generated: " + totalStates);
     }
 
     // Mid-game state. 1 to do the next move in upper middle board.
