@@ -17,5 +17,4 @@ public abstract class EvaluationTest {
     }
     public abstract boolean isTerminal(State state);
 
-    public abstract void cutOffEvaluate(State state);
 }

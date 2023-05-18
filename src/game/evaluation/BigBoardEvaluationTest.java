@@ -35,9 +35,4 @@ public class BigBoardEvaluationTest extends EvaluationTest {
         return false;
     }
 
-    @Override
-    public void cutOffEvaluate (State state) {
-        // in utilities put state with some value
-    }
-
 }
