@@ -1,17 +1,23 @@
 package demo;
 
+import ai.heuristic.MonteCarloAi;
+import ai.heuristic.RandomAI;
+import ai.search.AlphaBeta;
 import ai.search.Search;
 import game.move.Action;
+import game.move.Move;
 import game.player.Player;
 import game.board.State;
 import game.evaluation.EvaluationTest;
-import ai.search.MiniMax;
 import game.print.TicTacToePrinting;
 import game.board.BigBoard;
 import game.evaluation.BigBoardEvaluationTest;
 import ai.heuristic.EasyAI;
 import ai.heuristic.MediumAI;
 
+
+import java.util.Random;
+import java.util.Scanner;
 
 import static game.player.PlayerEnum.MAX;
 import static game.player.PlayerEnum.MIN;
@@ -20,35 +26,38 @@ public class MiniMaxDemo {
     public static int xWon = 0;
     public static int oWon = 0;
     public static int draw = 0;
+    public static Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
         System.out.println("This is a demonstration of minimax search on ultimate tic-tac-toe");
 
-        Player mediumAiMax = new Player(MAX, new MediumAI(), 3);
-        Player mediumAiMin = new Player(MIN, new MediumAI(), 5);
+        // MAX players
+        Player easyAiMax = new Player(MAX, new EasyAI(), 4);
+        Player mediumAiMax = new Player(MAX, new MediumAI(), 1);
+        Player monteCarloMax = new Player(MAX, new MonteCarloAi(), 1);
 
-        Player easyAiMax = new Player(MAX, new EasyAI(), 1);
+        // MIN players
         Player easyAiMin = new Player(MIN, new EasyAI(), 1);
+        Player mediumAiMin = new Player(MIN, new MediumAI(), 5);
+        Player monteCarloMin = new Player(MIN, new MonteCarloAi(), 3);
 
-        BigBoard initialBoard = new BigBoard(mediumAiMax, mediumAiMin);
+        Player randomPlayerMin = new Player(MIN, new RandomAI(), 1);
 
-        for (int i = 1; i <= 10; i++)
-            gamePlay(initialBoard, new MiniMax(initialBoard.getPlayer()), false);
 
+        BigBoard initialBoard = new BigBoard(mediumAiMax, monteCarloMin);
+
+
+        for (int i = 1; i <= 1; i++) {
+            gamePlay(initialBoard, new AlphaBeta(initialBoard.getPlayer()), true);
+            System.out.println(i+"----");
+        }
+        System.out.println("----------------");
         System.out.println("X won " + xWon);
         System.out.println("O won " + oWon);
         System.out.println("Draw " + draw);
-        xWon = 0;
-        oWon = 0;
-        draw = 0;
+        System.out.println("----------------");
 
-        // TODO: - make available actions to be stored in a List instead of Set
-        // TODO: - create absolutely random ai
-        // TODO: + make easy ai to actually play randomly unless possible to win
-        // TODO: - organise the code in a better structured way
-        // TODO: - create Player class to store depth limit, state score and player type
-        // TODO: - keep track of number of moves for each game
-        // TODO: -
+
     }
 
 
@@ -56,13 +65,7 @@ public class MiniMaxDemo {
         EvaluationTest evaluationTest = new BigBoardEvaluationTest();
         TicTacToePrinting ticTacToePrinting = new TicTacToePrinting();
 
-        if (print) {
-            System.out.println("Last move was in: " + state.getLastMove().getRow() + " " + state.getLastMove().getColumn());
-            System.out.println("State now: ");
-            ticTacToePrinting.print(state);
-        }
-
-        while(!evaluationTest.isTerminal(state)) {
+        while (!evaluationTest.isTerminal(state)) {
             if (state.getPlayer().getPlayerEnum() == MAX) { // MAX to play
                 Action nextAction = search
                         .findStrategy(state, evaluationTest, MAX).get(state);
@@ -71,22 +74,36 @@ public class MiniMaxDemo {
                 if (print) {
                     int row = state.getLastMove().getRow() + 1;
                     int col = state.getLastMove().getColumn() + 1;
-                    System.out.println("X in (" + row  + ", " + col + ")");
+                    System.out.println("X in (" + row + ", " + col + ")");
                 }
             } else { // MIN to play
-                Action nextAction = search
-                        .findStrategy(state, evaluationTest, MIN).get(state);
-                state = state.getActionResult(nextAction);
+                Action nextAction = null;
+
+//                if (state.getPlayer().getStateEvaluationAi() instanceof RandomAI) {
+//                    nextAction = state.getApplicableActions()
+//                            .get(new Random().nextInt(state.getApplicableActions().size()));
+//                } else {
+//                    nextAction = search
+//                            .findStrategy(state, evaluationTest, MIN).get(state);
+//                }
+                System.out.println("row");
+                String s = scanner.nextLine();
+                int row = Integer.parseInt(s);
+                System.out.println("col");
+                String s2 = scanner.nextLine();
+                int col = Integer.parseInt(s2);
+                state = state.getActionResult(new Move(row - 1, col - 1));
+//                state = state.getActionResult(nextAction);
 
                 if (print) {
-                    int row = state.getLastMove().getRow() + 1;
-                    int col = state.getLastMove().getColumn() + 1;
-                    System.out.println("O in (" + row  + ", " + col + ")");
+//                    int row = state.getLastMove().getRow() + 1;
+//                    int col = state.getLastMove().getColumn() + 1;
+                    System.out.println("O in (" + row + ", " + col + ")");
                 }
             }
+
             if (print) {
                 ticTacToePrinting.print(state);
-
             }
         }
 
@@ -106,8 +123,10 @@ public class MiniMaxDemo {
                 System.out.println("Game ended with a draw");
             }
         }
-        int totalStates = search.getNoOfStatesGenerated();
-        System.out.println("Total number of states generated: " + totalStates);
+        if (print) {
+            int totalStates = search.getNoOfStatesGenerated();
+            System.out.println("Total number of states generated: " + totalStates);
+        }
     }
 
     // Mid-game state. 1 to do the next move in upper middle board.

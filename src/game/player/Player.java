@@ -1,5 +1,6 @@
 package game.player;
 
+import ai.heuristic.RandomAI;
 import ai.heuristic.StateEvaluationAi;
 
 import java.util.Objects;
@@ -12,7 +13,7 @@ public class Player {
     public Player(PlayerEnum player, StateEvaluationAi stateEvaluationAi, int depthLimit) {
         this.player = player;
         this.stateEvaluationAi = stateEvaluationAi;
-        this.depthLimit = depthLimit;
+        this.depthLimit = stateEvaluationAi instanceof RandomAI ? 1 : depthLimit;
     }
 
     public StateEvaluationAi getStateEvaluationAi() {

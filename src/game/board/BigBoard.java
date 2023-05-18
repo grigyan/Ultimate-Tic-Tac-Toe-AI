@@ -44,7 +44,6 @@ public class BigBoard implements State {
         this.silhouette = getSilhouetteFromGrid(grid);
     }
 
-
     @Override
     public List<Action> getApplicableActions() {
         if (lastMove == null) {

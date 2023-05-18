@@ -1,9 +1,23 @@
 package ai.heuristic;
 
 import game.player.PlayerEnum;
-import game.move.Action;
 import game.move.Move;
 import game.board.BigBoard;
+
+/*
+Variables:
+1. currentPlayer is the player for whom we do the evaluation (e.g. last move was done by MAX we need to evaluate for MAX).
+2. opponent is the opponent player for currentPlayer:)
+3. score is the evaluation for the given position. It multiplied by -1 if currentPlayer is MIN.
+
+Medium AI Logic:
+1.
+
+
+ */
+
+
+
 
 public class MediumAI implements StateEvaluationAi {
     public int evaluateBoardAfterLastMove(BigBoard board) {
@@ -11,16 +25,44 @@ public class MediumAI implements StateEvaluationAi {
         int opponent = currentPlayer == 1 ? 2 : 1;
         int score = 0;
 
-        Action action = board.getLastMove();
-
-        Move move = (Move) action;
+        Move move = (Move) board.getLastMove();
         int moveRow = move.getRow();
         int moveColumn = move.getColumn();
 
+        // winning the small board
+        if (board.getSilhouette()[moveRow / 3][moveColumn / 3] == currentPlayer) {
+            // winning the center board
+            if (moveRow / 3 == 1 && moveColumn / 3 == 1) {
+                score += 10;
+            }
+
+            // winning the corner board
+            if ((moveRow / 3 == 0 || moveRow / 3 == 2) && (moveColumn / 3 == 0 || moveColumn / 3 == 2)) {
+                score += 3;
+            }
+
+            score += 5;
+        }
+
+        // getting the center square in any small board
+        if ((moveRow == 1 || moveRow == 4 || moveRow == 7) && (moveColumn == 1 || moveColumn == 4 || moveColumn == 7)) {
+            score += 3;
+        }
+
+        // getting square in the center board
+        if (moveRow / 3 == 1 && moveColumn / 3 == 1) {
+            score += 3;
+        }
+
+
+        return currentPlayer == 1 ? score : (-1) * score;
+    }
+}
+
+/*
         // check if it is a winning move +100
-        BigBoard successor = (BigBoard) board.getActionResult(action);
-        if (board.getSilhouette()[moveRow / 3][moveColumn / 3] != successor.getSilhouette()[moveRow / 3][moveColumn / 3]) {
-            score += 100;
+        if (board.isSilhouetteWon()) {
+            return 2000;
         }
         //
 
@@ -71,8 +113,4 @@ public class MediumAI implements StateEvaluationAi {
                 (moveRow % 3 == 2 && moveColumn % 3 == 1)) {
             score += 30;
         }
-
-
-        return score;
-    }
-}
+ */
