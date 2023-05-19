@@ -118,15 +118,16 @@ public class BigBoardUtils {
     }
 
     public static List<Action> getApplicableActionsAfterLastMove(Move lastMove, int[][] silhouette, int[][] grid) {
-        int i = lastMove.getRow() % 3;
-        int j = lastMove.getColumn() % 3;
+        int silhouetteRow = lastMove.getRow() % 3;
+        int silhouetteCol = lastMove.getColumn() % 3;
         List<Action> actions = new ArrayList<>();
 
-        // if the small board is free
-        if (silhouette[i][j] == EMPTY) {
+        // if the small board is not won and has free spot
+        if (silhouette[silhouetteRow][silhouetteCol] == EMPTY &&
+                smallBoardHasFreeCell(grid, silhouetteRow * 3, silhouetteCol * 3)) {
             // loop through the small board
-            for (int row = 3*i; row < 3*i + 3; row++) {
-                for (int col = 3*j; col < 3*j + 3; col++) {
+            for (int row = 3*silhouetteRow; row < 3*silhouetteRow + 3; row++) {
+                for (int col = 3*silhouetteCol; col < 3*silhouetteCol + 3; col++) {
                     if (grid[row][col] == EMPTY) {
                         Move move = new Move(row, col);
                         actions.add(move);
@@ -137,21 +138,34 @@ public class BigBoardUtils {
         // find all other applicable moves on the entire grid
         else {
             // loop through silhouette's empty cells and find the applicable moves on the big board
-            for (int silhouetteRow = 0; silhouetteRow < 3; silhouetteRow++) {
-                for (int silhouetteCol = 0; silhouetteCol < 3; silhouetteCol++) {
-                    if(silhouette[silhouetteRow][silhouetteCol] == EMPTY) {
-                        for (int bigBoardRow = silhouetteRow  * 3; bigBoardRow < silhouetteRow * 3 + 3; bigBoardRow++) {
-                            for (int bigBoardCol = silhouetteCol * 3; bigBoardCol < silhouetteCol * 3 + 3; bigBoardCol++) {
+            for (int i = 0; i < 3; i++) {
+                for (int j = 0; j < 3; j++) {
+                    if(silhouette[i][j] == EMPTY) {
+                        for (int bigBoardRow = i  * 3; bigBoardRow < i * 3 + 3; bigBoardRow++) {
+                            for (int bigBoardCol = j * 3; bigBoardCol < j * 3 + 3; bigBoardCol++) {
                                 if(grid[bigBoardRow][bigBoardCol] == EMPTY) {
                                     actions.add(new Move(bigBoardRow, bigBoardCol));
                                 }
                             }
                         }
+
                     }
                 }
             }
         }
 
         return actions;
+    }
+
+    private static boolean smallBoardHasFreeCell(int[][] grid, int topLeftRow, int topLeftCol) {
+        for (int i = topLeftRow; i < topLeftRow + 3; i++) {
+            for (int j = topLeftCol; j < topLeftCol + 3; j++) {
+                if (grid[i][j] == EMPTY) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }
