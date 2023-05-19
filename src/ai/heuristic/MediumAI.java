@@ -11,7 +11,10 @@ Variables:
 3. score is the evaluation for the given position. It multiplied by -1 if currentPlayer is MIN.
 
 Medium AI Logic:
-1.
+1. Small board win +5
+2. Center board win +10
+3. Corner board win +3
+4. Two board win that can be extended to win + 4
 
 
  */
@@ -21,8 +24,8 @@ Medium AI Logic:
 
 public class MediumAI implements StateEvaluationAi {
     public int evaluateBoardAfterLastMove(BigBoard board) {
-        int currentPlayer = board.getPlayer().getPlayerEnum() == PlayerEnum.MAX ? 2 : 1;
-        int opponent = currentPlayer == 1 ? 2 : 1;
+        int topPlayer = board.getPlayer().getPlayerEnum() == PlayerEnum.MIN ? 1 : 2;
+        int opponent = topPlayer == 1 ? 2 : 1;
         int score = 0;
 
         Move move = (Move) board.getLastMove();
@@ -30,7 +33,7 @@ public class MediumAI implements StateEvaluationAi {
         int moveColumn = move.getColumn();
 
         // winning the small board
-        if (board.getSilhouette()[moveRow / 3][moveColumn / 3] == currentPlayer) {
+        if (board.getSilhouette()[moveRow / 3][moveColumn / 3] == topPlayer) {
             // winning the center board
             if (moveRow / 3 == 1 && moveColumn / 3 == 1) {
                 score += 10;
@@ -55,7 +58,7 @@ public class MediumAI implements StateEvaluationAi {
         }
 
 
-        return currentPlayer == 1 ? score : (-1) * score;
+        return topPlayer == 1 ? score : (-1) * score;
     }
 }
 
