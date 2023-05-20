@@ -15,7 +15,6 @@ import ai.heuristic.EasyAI;
 import ai.heuristic.MediumAI;
 
 
-import java.util.Random;
 import java.util.Scanner;
 
 import static game.player.PlayerEnum.MAX;
@@ -54,24 +53,16 @@ public class MiniMaxDemo {
 
         // MIN players
         Player randomMin = new Player(MIN, new RandomAI());      // for random players depth is set to 1 automatically
-        Player easyAiMin = new Player(MIN, new EasyAI(), 2);
+        Player easyAiMin = new Player(MIN, new EasyAI(), 1);
         Player mediumAiMin = new Player(MIN, new MediumAI(), 5);
         Player monteCarloMin = new Player(MIN, new MonteCarloAI(), 3);
 
-        BigBoard initialBoard = new BigBoard(easyAiMax, randomMin);
+        BigBoard initialBoard = new BigBoard(mediumAiMax, randomMin);
+        playXGames(initialBoard, new AlphaBeta(), 1000, false);
 
-        for (int i = 1; i <= 1000; i++) {
-            gamePlay(initialBoard, new AlphaBeta(), false);
-            System.out.println(i + "----");
-        }
-
-        System.out.println("----------------");
-        System.out.println("X won " + xWon);
-        System.out.println("O won " + oWon);
-        System.out.println("Draw " + draw);
-        System.out.println("----------------");
+        BigBoard initialBoard2 = new BigBoard(easyAiMax, randomMin);
+        playXGames(initialBoard2, new AlphaBeta(), 1000, false);
     }
-
 
     public static void gamePlay(State state, Search search, boolean print) {
         EvaluationTest evaluationTest = new BigBoardEvaluationTest();
@@ -111,6 +102,21 @@ public class MiniMaxDemo {
             int totalStates = search.getNoOfStatesGenerated();
             System.out.println("Total number of states generated: " + totalStates);
         }
+    }
+
+    public static void playXGames(BigBoard board, Search search, int X, boolean print) {
+        for (int i = 1; i <= X; i++) {
+            gamePlay(board, search, print);
+        }
+        System.out.println("----------------");
+        System.out.println("X won " + xWon);
+        System.out.println("O won " + oWon);
+        System.out.println("Draw " + draw);
+        System.out.println("----------------");
+
+        xWon = 0;
+        oWon = 0;
+        draw = 0;
     }
 
     // Mid-game state. 1 to do the next move in upper middle board.

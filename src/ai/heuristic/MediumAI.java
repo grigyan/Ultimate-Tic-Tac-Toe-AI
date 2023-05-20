@@ -4,9 +4,11 @@ import game.player.PlayerEnum;
 import game.move.Move;
 import game.board.BigBoard;
 
+import static game.board.BoardConstants.EMPTY;
+
 /*
 Variables:
-1. currentPlayer is the player for whom we do the evaluation (e.g. last move was done by MAX we need to evaluate for MAX).
+1. topPlayer is the player for whom we do the evaluation (e.g. last move was done by MAX we need to evaluate for MAX).
 2. opponent is the opponent player for currentPlayer:)
 3. score is the evaluation for the given position. It multiplied by -1 if currentPlayer is MIN.
 
@@ -28,92 +30,108 @@ public class MediumAI implements StateEvaluationAi {
         int opponent = topPlayer == 1 ? 2 : 1;
         int score = 0;
 
-        Move move = (Move) board.getLastMove();
-        int moveRow = move.getRow();
-        int moveColumn = move.getColumn();
+        Move lastMove = board.getLastMove();
+        int lastMoveRow = lastMove.getRow();
+        int lastMoveCol = lastMove.getColumn();
+        int smallBoardI = lastMoveRow / 3;
+        int smallBoardJ = lastMoveCol / 3;
 
         // winning the small board
-        if (board.getSilhouette()[moveRow / 3][moveColumn / 3] == topPlayer) {
+        if (board.getSilhouette()[smallBoardI][smallBoardJ] == topPlayer) {
+            score += 5;
             // winning the center board
-            if (moveRow / 3 == 1 && moveColumn / 3 == 1) {
-                score += 10;
+            if (smallBoardI == 1 && smallBoardJ == 1) {
+                score += 5;
             }
 
             // winning the corner board
-            if ((moveRow / 3 == 0 || moveRow / 3 == 2) && (moveColumn / 3 == 0 || moveColumn / 3 == 2)) {
+            if ((smallBoardI == 0 || smallBoardI == 2) && (smallBoardJ == 0 || smallBoardJ == 2)) {
                 score += 3;
             }
-
-            score += 5;
         }
 
-        // getting the center square in any small board
-        if ((moveRow == 1 || moveRow == 4 || moveRow == 7) && (moveColumn == 1 || moveColumn == 4 || moveColumn == 7)) {
+        // creating two in a row/column/diagonal that can later become three in a row/column/diagonal
+        if (createsWinningSequenceInBoard(board.getSilhouette(), smallBoardI, smallBoardJ)) {
+            score += 10;
+        }
+
+
+        int[][] copyOfSmallBoard = new int[3][3];
+        int leftTopCellRow = (lastMoveRow / 3) * 3;     // left top cell row from the small board of the last move
+        int leftTopCellCol = (lastMoveRow / 3) * 3;     // left top cell col from the small board of the last move
+        for (int i = leftTopCellRow, copyBoardRow = 0; i < leftTopCellRow + 3; i++, copyBoardRow++) {
+            for (int j = leftTopCellCol, copyBoardCol = 0; j < leftTopCellCol + 3; j++, copyBoardCol++) {
+                copyOfSmallBoard[copyBoardRow][copyBoardCol] = board.getCell(i, j);
+            }
+        }
+
+        if (createsWinningSequenceInBoard(copyOfSmallBoard, lastMoveRow % 3, lastMoveCol % 3)) {
             score += 3;
         }
-
-        // getting square in the center board
-        if (moveRow / 3 == 1 && moveColumn / 3 == 1) {
-            score += 3;
-        }
-
 
         return topPlayer == 1 ? score : (-1) * score;
     }
+
+    private boolean createsWinningSequenceInBoard(int[][] board, int lastMoveRow, int lastMoveCol) {
+        int player = board[lastMoveRow][lastMoveCol];
+
+        // check rows
+        int rowCount = 0;
+        int opponentCount = 0;
+        for (int col = 0; col < 3; col++) {
+            if (board[lastMoveRow][col] == player) {
+                rowCount++;
+            } else if (board[lastMoveRow][col] != EMPTY) {
+                opponentCount++;
+            }
+        }
+
+        if (rowCount == 2 && opponentCount == 0) {
+            return true;
+        }
+
+        // check columns
+        int colCount = 0;
+        opponentCount = 0;
+        for (int row = 0; row < 3; row++) {
+            if (board[row][lastMoveCol] == player) {
+                colCount++;
+            } else if (board[row][lastMoveCol] != EMPTY) {
+                opponentCount++;
+            }
+        }
+        if (colCount == 2 && opponentCount == 0) {
+            return true;
+        }
+
+        // check diagonal if the last move is on one
+        if (lastMoveRow == lastMoveCol || lastMoveRow + lastMoveCol == 2) {
+            int mainDiagonalCount = 0;
+            int mainDiagonalOpponentCount = 0;
+
+            int antiDiagonalCount = 0;
+            int antiDiagonalOpponentCount = 0;
+
+            for (int i = 0; i < 3; i++) {
+                if (board[i][i] == player) {
+                    mainDiagonalCount++;
+                } else if (board[i][i] != EMPTY) {
+                    mainDiagonalOpponentCount++;
+                }
+                if (board[i][2 - i] == player) {
+                    antiDiagonalCount++;
+                } else if (board[i][2 - i] != EMPTY) {
+                    antiDiagonalOpponentCount++;
+                }
+            }
+
+            if ((mainDiagonalCount == 2 && mainDiagonalOpponentCount == 0) || (antiDiagonalCount == 2 && antiDiagonalOpponentCount == 0)) {
+                return true;
+            }
+        }
+
+        // no winning sequences created
+        return false;
+    }
+
 }
-
-/*
-        // check if it is a winning move +100
-        if (board.isSilhouetteWon()) {
-            return 2000;
-        }
-        //
-
-        // blocks opponent's two in a row or two in a column +40
-        if (moveColumn % 3 == 0) {  // move was done at the leftmost cell of the row
-            if (board.getCell(moveRow, moveColumn + 1) == opponent &&
-                    board.getCell(moveRow, moveColumn + 2) == opponent) {
-                score += 40;
-            }
-        } else if (moveColumn % 3 == 1) { // move was done at the mid-cell of the row
-            if (board.getCell(moveRow, moveColumn - 1) == opponent &&
-                    board.getCell(moveRow, moveColumn + 1) == opponent) {
-                score += 40;
-            }
-        } else { // move was done at the rightmost cell of the row
-            if (board.getCell(moveRow, moveColumn - 2) == opponent &&
-                    board.getCell(moveRow, moveColumn - 1) == opponent) {
-                score += 40;
-            }
-        }
-
-        if (moveRow % 3 == 0) { // move was done at the top cell of the column
-            if (board.getCell(moveRow + 1, moveColumn) == opponent &&
-                    board.getCell(moveRow + 2, moveColumn) == opponent) {
-                score += 40;
-            }
-        } else if (moveRow % 3 == 1) { // move was done at the mid-cell of the column
-            if (board.getCell(moveRow - 1, moveColumn) == opponent &&
-                    board.getCell(moveRow + 1, moveColumn) == opponent) {
-                score += 40;
-            }
-        } else { // move was done at the bottom-most cell of the column
-            if (board.getCell(moveRow - 1, moveColumn) == opponent &&
-                    board.getCell(moveRow - 2, moveColumn) == opponent) {
-                score += 40;
-            }
-        }
-        //
-
-        // center: +40
-        if (moveRow % 3 == 1 && moveColumn % 3 == 1) {
-            score += 40;
-        }
-        // mid-cell: +30
-        if ((moveRow % 3 == 1 && moveColumn % 3 == 0) ||
-                (moveRow % 3 == 1 && moveColumn % 3 == 2) ||
-                (moveRow % 3 == 0 && moveColumn % 3 == 1) ||
-                (moveRow % 3 == 2 && moveColumn % 3 == 1)) {
-            score += 30;
-        }
- */
