@@ -16,12 +16,7 @@ import static game.player.PlayerEnum.MAX;
 
 public class MiniMax implements Search {
     private int noOfStates = 0;
-    private final Random random = new Random();
-    private final Player player;
 
-    public MiniMax(Player player) {
-        this.player = player;
-    }
 
     @Override
     public int getNoOfStatesGenerated() {
@@ -29,9 +24,9 @@ public class MiniMax implements Search {
     }
 
     @Override
-    public Map<State, Action> findStrategy(State initialState, EvaluationTest terminalTest, PlayerEnum playerEnum) {
+    public Map<State, Action> findStrategy(State initialState, EvaluationTest terminalTest, Player player) {
         HashMap<State, Action> strategy = new HashMap<>();
-        if (playerEnum == MAX) {
+        if (player.getPlayerEnum() == MAX) {
             maxValue(initialState, terminalTest, strategy, 0);
         } else {
             minValue(initialState, terminalTest, strategy, 0);
@@ -41,7 +36,7 @@ public class MiniMax implements Search {
     }
 
     private int maxValue(State currentState, EvaluationTest terminalTest,
-                         HashMap<State, Action> strategy, int depth) {
+                         HashMap<State, Action> strategy, Player player, int depth) {
         if (terminalTest.isTerminal(currentState)) {
             return terminalTest.getStateEvaluation(currentState);
         }
@@ -57,7 +52,7 @@ public class MiniMax implements Search {
             State successor = currentState.getActionResult(action);
             noOfStates += 1;
 
-            int newValue = minValue(successor, terminalTest, strategy, depth + 1);     //call to min()
+            int newValue = minValue(successor, terminalTest, strategy, player, depth + 1);     //call to min()
             if (newValue >= bestMoveValue) {
                 maxActions.insert(newValue, action);
                 bestMoveValue = newValue;
@@ -71,7 +66,7 @@ public class MiniMax implements Search {
     }
 
     private int minValue(State currentState, EvaluationTest terminalTest,
-                         HashMap<State, Action> strategy, int depth) {
+                         HashMap<State, Action> strategy, Player player, int depth) {
         if (terminalTest.isTerminal(currentState)) {
             return terminalTest.getStateEvaluation(currentState);
         }
@@ -88,7 +83,7 @@ public class MiniMax implements Search {
             State successor = currentState.getActionResult(action);
             noOfStates += 1;
 
-            int newValue = maxValue(successor, terminalTest, strategy, depth + 1);     // call to max()
+            int newValue = maxValue(successor, terminalTest, strategy, player, depth + 1);     // call to max()
             if (newValue <= bestMoveValue) {
                 minActions.insert(newValue, action);
                 bestMoveValue = newValue;

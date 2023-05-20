@@ -1,6 +1,7 @@
 package ai.search;
 
 
+import ai.heuristic.RandomAI;
 import priorityQueue.MaxHeapPriorityQueue;
 import priorityQueue.MinHeapPriorityQueue;
 import game.move.Action;
@@ -16,12 +17,6 @@ import static game.player.PlayerEnum.MAX;
 
 public class AlphaBeta implements Search {
     private int noOfStates = 0;
-    private Random random = new Random();
-    private final Player player;
-
-    public AlphaBeta(Player player) {
-        this.player = player;
-    }
 
     @Override
     public int getNoOfStatesGenerated() {
@@ -29,24 +24,27 @@ public class AlphaBeta implements Search {
     }
 
     @Override
-    public Map<State, Action> findStrategy(State initialState, EvaluationTest terminalTest, PlayerEnum playerEnum) {
+    public Map<State, Action> findStrategy(State initialState, EvaluationTest terminalTest, Player player) {
         HashMap<State, Action> strategy = new HashMap<>();
-        if (playerEnum == MAX) {
-            maxValue(initialState, terminalTest, strategy, 0, Integer.MIN_VALUE, Integer.MAX_VALUE);
+        if (player.getPlayerEnum() == MAX) {
+            maxValue(initialState, terminalTest, strategy, 0, player, Integer.MIN_VALUE, Integer.MAX_VALUE);
         } else {
-            minValue(initialState, terminalTest, strategy, 0, Integer.MIN_VALUE, Integer.MAX_VALUE);
+            minValue(initialState, terminalTest, strategy, 0, player, Integer.MIN_VALUE, Integer.MAX_VALUE);
         }
 
         return strategy;
     }
 
     private int maxValue(State currentState, EvaluationTest terminalTest,
-                         HashMap<State, Action> strategy, int depth, int alpha, int beta) {
+                         HashMap<State, Action> strategy, int depth, Player player, int alpha, int beta) {
         if (terminalTest.isTerminal(currentState)) {
             return terminalTest.getStateEvaluation(currentState);
         }
 
         if (depth == player.getDepthLimit()) {
+            if (player.getStateEvaluationAi() instanceof RandomAI) {
+                return Integer.MAX_VALUE;
+            }
             return player.getStateEvaluationAi().evaluateBoardAfterLastMove((BigBoard) currentState);
         }
 
@@ -57,7 +55,7 @@ public class AlphaBeta implements Search {
             State successor = currentState.getActionResult(action);
             noOfStates += 1;
 
-            int newValue = minValue(successor, terminalTest, strategy, depth + 1, alpha, beta);     //call to min()
+            int newValue = minValue(successor, terminalTest, strategy, depth + 1, player, alpha, beta);     //call to min()
             if (newValue >= bestMoveValue) {
                 maxActions.insert(newValue, action);
                 bestMoveValue = newValue;
@@ -75,12 +73,15 @@ public class AlphaBeta implements Search {
     }
 
     private int minValue(State currentState, EvaluationTest terminalTest,
-                         HashMap<State, Action> strategy, int depth, int alpha, int beta) {
+                         HashMap<State, Action> strategy, int depth, Player player,int alpha, int beta) {
         if (terminalTest.isTerminal(currentState)) {
             return terminalTest.getStateEvaluation(currentState);
         }
 
         if (depth == player.getDepthLimit()) {
+            if (player.getStateEvaluationAi() instanceof RandomAI) {
+                return Integer.MIN_VALUE;
+            }
             return player.getStateEvaluationAi().evaluateBoardAfterLastMove((BigBoard) currentState);
         }
 
@@ -91,7 +92,7 @@ public class AlphaBeta implements Search {
             State successor = currentState.getActionResult(action);
             noOfStates += 1;
 
-            int newValue = maxValue(successor, terminalTest, strategy, depth + 1, alpha, beta);     // call to max()
+            int newValue = maxValue(successor, terminalTest, strategy, depth + 1, player, alpha, beta);     // call to max()
             if (newValue <= bestMoveValue) {
                 minActions.insert(newValue, action);
                 bestMoveValue = newValue;
@@ -107,40 +108,5 @@ public class AlphaBeta implements Search {
         strategy.put(currentState, bestMove.getValue());
         return bestMove.getKey();
     }
-
-    private Action getBestActionFromMap(Map<Action, Integer> actionToEvaluationMap, PlayerEnum player) {
-        List<Action> actions = new ArrayList<>();
-        if (player == MAX) {
-            int max = Integer.MIN_VALUE;
-            for (Map.Entry<Action, Integer> entry : actionToEvaluationMap.entrySet()) {
-                if (entry.getValue() > max) {
-                    max = entry.getValue();
-                }
-            }
-
-            for (Map.Entry<Action, Integer> entry : actionToEvaluationMap.entrySet()) {
-                if (entry.getValue() == max) {
-                    actions.add(entry.getKey());
-                }
-            }
-        } else {
-            int min = Integer.MAX_VALUE;
-            for (Map.Entry<Action, Integer> entry : actionToEvaluationMap.entrySet()) {
-                if (entry.getValue() < min) {
-                    min = entry.getValue();
-                }
-            }
-
-            for (Map.Entry<Action, Integer> entry : actionToEvaluationMap.entrySet()) {
-                if (entry.getValue() == min) {
-                    actions.add(entry.getKey());
-                }
-            }
-        }
-
-        return actions.get(random.nextInt(actions.size()));
-    }
-
-
 
 }

@@ -3,14 +3,12 @@ package ai.heuristic;
 import game.board.BigBoard;
 import game.evaluation.BigBoardEvaluationTest;
 import game.move.Action;
-import game.player.PlayerEnum;
 
 import java.util.List;
 import java.util.Random;
 
-import static game.player.PlayerEnum.MAX;
 
-public class MonteCarloAi implements StateEvaluationAi {
+public class MonteCarloAI implements StateEvaluationAi {
 
     int numberOfGames = 1;
     BigBoardEvaluationTest evaluationTest = new BigBoardEvaluationTest();

@@ -1,6 +1,6 @@
 package demo;
 
-import ai.heuristic.MonteCarloAi;
+import ai.heuristic.MonteCarloAI;
 import ai.heuristic.RandomAI;
 import ai.search.AlphaBeta;
 import ai.search.Search;
@@ -46,28 +46,28 @@ public class MiniMaxDemo {
         System.out.println("This is a demonstration of minimax search on ultimate tic-tac-toe");
 
 
-
         // MAX players
+        Player randomMax = new Player(MAX, new RandomAI() {
+        }, 1);
         Player easyAiMax = new Player(MAX, new EasyAI(), 2);
         Player mediumAiMax = new Player(MAX, new MediumAI(), 1);
-        Player monteCarloMax = new Player(MAX, new MonteCarloAi(), 1);
+        Player monteCarloMax = new Player(MAX, new MonteCarloAI(), 1);
 
         // MIN players
-        Player easyAiMin = new Player(MIN, new EasyAI(), 1);
+        Player randomMin = new Player(MIN, new RandomAI() {
+        }, 1);
+        Player easyAiMin = new Player(MIN, new EasyAI(), 3);
         Player mediumAiMin = new Player(MIN, new MediumAI(), 5);
-        Player monteCarloMin = new Player(MIN, new MonteCarloAi(), 3);
+        Player monteCarloMin = new Player(MIN, new MonteCarloAI(), 3);
 
 
-        Player randomPlayerMin = new Player(MIN, new RandomAI(), 1);
+        BigBoard initialBoard = new BigBoard(easyAiMax, randomMin);
 
 
-        BigBoard initialBoard = new BigBoard(easyAiMax, randomPlayerMin);
+        for (int i = 1; i <= 1000; i++) {
+            gamePlay(initialBoard, new AlphaBeta(), false);
 
-
-        for (int i = 1; i <= 500; i++) {
-            gamePlay(initialBoard, new AlphaBeta(initialBoard.getPlayer()), false);
-
-            System.out.println(i+"----");
+            System.out.println(i + "----");
         }
         System.out.println("----------------");
         System.out.println("X won " + xWon);
@@ -84,27 +84,17 @@ public class MiniMaxDemo {
         TicTacToePrinting ticTacToePrinting = new TicTacToePrinting();
 
         while (!evaluationTest.isTerminal(state)) {
-            if (state.getPlayer().getPlayerEnum() == MAX) { // MAX to play
-                Action nextAction = search
-                        .findStrategy(state, evaluationTest, MAX).get(state);
-                state = state.getActionResult(nextAction);
+            Action nextAction = null;
+            // check for random player
+            if (state.getPlayer().getStateEvaluationAi() instanceof RandomAI) {
+                nextAction = state.getApplicableActions()
+                        .get(new Random().nextInt(state.getApplicableActions().size()));
+            } else {
+                nextAction = search
+                        .findStrategy(state, evaluationTest, state.getPlayer()).get(state);
+            }
 
-                if (print) {
-                    int row = state.getLastMove().getRow() + 1;
-                    int col = state.getLastMove().getColumn() + 1;
-                    System.out.println("X in (" + row + ", " + col + ")");
-                }
-            } else { // MIN to play
-                Action nextAction = null;
-
-                if (state.getPlayer().getStateEvaluationAi() instanceof RandomAI) {
-                    nextAction = state.getApplicableActions()
-                            .get(new Random().nextInt(state.getApplicableActions().size()));
-                } else {
-                    nextAction = search
-                            .findStrategy(state, evaluationTest, MIN).get(state);
-                }
-                state = state.getActionResult(nextAction);
+            state = state.getActionResult(nextAction);
 //                System.out.println("row");
 //                String s = scanner.nextLine();
 //                int row = Integer.parseInt(s);
@@ -113,24 +103,22 @@ public class MiniMaxDemo {
 //                int col = Integer.parseInt(s2);
 //                state = state.getActionResult(new Move(row - 1, col - 1));
 
-                if (print) {
-                    int row = state.getLastMove().getRow() + 1;
-                    int col = state.getLastMove().getColumn() + 1;
-                    System.out.println("O in (" + row + ", " + col + ")");
-                }
-            }
 
             if (print) {
+                int row = state.getLastMove().getRow() + 1;
+                int col = state.getLastMove().getColumn() + 1;
+                String mark = state.getPlayer().getPlayerEnum() == MAX ? "O" : "X";
+                System.out.println(mark + " in (" + row + ", " + col + ")");
                 ticTacToePrinting.print(state);
             }
         }
 
         BigBoard board = (BigBoard) state;
         if (board.isSilhouetteWon()) {
-            if (board.getPlayer().getPlayerEnum() == MAX) {
-                oWon++;
-            } else {
+            if (board.getPlayer().getPlayerEnum() == MIN) {
                 xWon++;
+            } else {
+                oWon++;
             }
             if (print) {
                 System.out.println(board.getPlayer().getPlayerEnum() == MAX ? "O won the game" : "X won the game");

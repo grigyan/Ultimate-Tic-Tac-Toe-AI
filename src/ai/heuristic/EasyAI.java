@@ -12,7 +12,7 @@ Variables:
 
 Easy AI Logic:
 
-1. Return number of small boards won by topPlayer minus number of small boards lost by topPlayer
+1. Return number of small boards won by topPlayer minus number of small boards won by opponent
  */
 
 
