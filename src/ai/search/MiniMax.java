@@ -8,7 +8,6 @@ import game.board.BigBoard;
 import game.board.State;
 import game.evaluation.EvaluationTest;
 import game.player.Player;
-import game.player.PlayerEnum;
 
 import java.util.*;
 
@@ -27,9 +26,9 @@ public class MiniMax implements Search {
     public Map<State, Action> findStrategy(State initialState, EvaluationTest terminalTest, Player player) {
         HashMap<State, Action> strategy = new HashMap<>();
         if (player.getPlayerEnum() == MAX) {
-            maxValue(initialState, terminalTest, strategy, 0);
+            maxValue(initialState, terminalTest, strategy, player, 0);
         } else {
-            minValue(initialState, terminalTest, strategy, 0);
+            minValue(initialState, terminalTest, strategy, player, 0);
         }
 
         return strategy;

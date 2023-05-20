@@ -47,35 +47,29 @@ public class MiniMaxDemo {
 
 
         // MAX players
-        Player randomMax = new Player(MAX, new RandomAI() {
-        }, 1);
+        Player randomMax = new Player(MAX, new RandomAI());      // for random players depth is set to 1 automatically
         Player easyAiMax = new Player(MAX, new EasyAI(), 2);
         Player mediumAiMax = new Player(MAX, new MediumAI(), 1);
         Player monteCarloMax = new Player(MAX, new MonteCarloAI(), 1);
 
         // MIN players
-        Player randomMin = new Player(MIN, new RandomAI() {
-        }, 1);
-        Player easyAiMin = new Player(MIN, new EasyAI(), 3);
+        Player randomMin = new Player(MIN, new RandomAI());      // for random players depth is set to 1 automatically
+        Player easyAiMin = new Player(MIN, new EasyAI(), 2);
         Player mediumAiMin = new Player(MIN, new MediumAI(), 5);
         Player monteCarloMin = new Player(MIN, new MonteCarloAI(), 3);
 
-
         BigBoard initialBoard = new BigBoard(easyAiMax, randomMin);
-
 
         for (int i = 1; i <= 1000; i++) {
             gamePlay(initialBoard, new AlphaBeta(), false);
-
             System.out.println(i + "----");
         }
+
         System.out.println("----------------");
         System.out.println("X won " + xWon);
         System.out.println("O won " + oWon);
         System.out.println("Draw " + draw);
         System.out.println("----------------");
-
-
     }
 
 
@@ -84,25 +78,9 @@ public class MiniMaxDemo {
         TicTacToePrinting ticTacToePrinting = new TicTacToePrinting();
 
         while (!evaluationTest.isTerminal(state)) {
-            Action nextAction = null;
-            // check for random player
-            if (state.getPlayer().getStateEvaluationAi() instanceof RandomAI) {
-                nextAction = state.getApplicableActions()
-                        .get(new Random().nextInt(state.getApplicableActions().size()));
-            } else {
-                nextAction = search
+            Action nextAction = search
                         .findStrategy(state, evaluationTest, state.getPlayer()).get(state);
-            }
-
             state = state.getActionResult(nextAction);
-//                System.out.println("row");
-//                String s = scanner.nextLine();
-//                int row = Integer.parseInt(s);
-//                System.out.println("col");
-//                String s2 = scanner.nextLine();
-//                int col = Integer.parseInt(s2);
-//                state = state.getActionResult(new Move(row - 1, col - 1));
-
 
             if (print) {
                 int row = state.getLastMove().getRow() + 1;

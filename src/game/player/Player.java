@@ -10,10 +10,16 @@ public class Player {
     StateEvaluationAi stateEvaluationAi;
     int depthLimit;
 
-    public Player(PlayerEnum player, StateEvaluationAi stateEvaluationAi, int depthLimit) {
+    public Player (PlayerEnum player, StateEvaluationAi stateEvaluationAi, int depthLimit) {
         this.player = player;
         this.stateEvaluationAi = stateEvaluationAi;
-        this.depthLimit = stateEvaluationAi instanceof RandomAI ? 1 : depthLimit;
+        this.depthLimit = depthLimit;
+    }
+
+    public Player (PlayerEnum player, StateEvaluationAi stateEvaluationAi) {
+        this.player = player;
+        this.stateEvaluationAi = stateEvaluationAi;
+        depthLimit = 1;
     }
 
     public StateEvaluationAi getStateEvaluationAi() {

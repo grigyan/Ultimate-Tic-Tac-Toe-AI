@@ -1,7 +1,6 @@
 package ai.search;
 
 
-import ai.heuristic.RandomAI;
 import priorityQueue.MaxHeapPriorityQueue;
 import priorityQueue.MinHeapPriorityQueue;
 import game.move.Action;
@@ -9,7 +8,6 @@ import game.board.BigBoard;
 import game.board.State;
 import game.evaluation.EvaluationTest;
 import game.player.Player;
-import game.player.PlayerEnum;
 
 import java.util.*;
 
@@ -42,9 +40,6 @@ public class AlphaBeta implements Search {
         }
 
         if (depth == player.getDepthLimit()) {
-            if (player.getStateEvaluationAi() instanceof RandomAI) {
-                return Integer.MAX_VALUE;
-            }
             return player.getStateEvaluationAi().evaluateBoardAfterLastMove((BigBoard) currentState);
         }
 
@@ -79,9 +74,6 @@ public class AlphaBeta implements Search {
         }
 
         if (depth == player.getDepthLimit()) {
-            if (player.getStateEvaluationAi() instanceof RandomAI) {
-                return Integer.MIN_VALUE;
-            }
             return player.getStateEvaluationAi().evaluateBoardAfterLastMove((BigBoard) currentState);
         }
 

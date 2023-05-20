@@ -2,6 +2,10 @@ package ai.heuristic;
 
 import game.board.BigBoard;
 
-public interface RandomAI extends StateEvaluationAi {
+public class RandomAI implements StateEvaluationAi {
 
+    @Override
+    public int evaluateBoardAfterLastMove(BigBoard board) {
+        return 0;
+    }
 }
