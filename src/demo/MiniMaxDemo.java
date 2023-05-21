@@ -5,6 +5,7 @@ import ai.heuristic.RandomAI;
 import ai.search.AlphaBeta;
 import ai.search.Search;
 import game.move.Action;
+import game.move.Move;
 import game.player.Player;
 import game.board.State;
 import game.evaluation.EvaluationTest;
@@ -24,26 +25,23 @@ public class MiniMaxDemo {
     public static int xWon = 0;
     public static int oWon = 0;
     public static int draw = 0;
-    public static Scanner scanner = new Scanner(System.in);
 
-    //         BigBoard notTerminalState = new BigBoard(easyAiMax, easyAiMin, MiniMaxDemo.terminalState, new Move(5, 1));
-    public static int[][] notTerminalState = {
-            {1, 1, 0, 0, 0, 0, 2, 0, 1},
-            {0, 2, 0, 0, 0, 0, 2, 0, 0},
-            {2, 0, 0, 2, 2, 2, 2, 0, 0},
-
-            {0, 0, 1, 0, 0, 2, 0, 0, 1},
-            {0, 2, 2, 1, 1, 0, 2, 0, 1},
-            {2, 1, 1, 2, 1, 2, 2, 1, 0},
-
-            {0, 0, 1, 2, 1, 2, 1, 1, 2},
-            {1, 1, 1, 1, 1, 2, 0, 2, 0},
-            {0, 1, 0, 2, 2, 1, 2, 1, 1}
+    public static int[][] midGame = {
+            {0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 2},
+            {2, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 2, 1, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 1, 0, 0, 0, 1, 0, 0},
+            {0, 0, 0, 0, 0, 1, 0, 0, 0},
+            {0, 0, 1, 0, 0, 2, 0, 2, 0},
     };
+    //public static BigBoard midGameBoard = new BigBoard(mediumAiMax, easyAiMin, MiniMaxDemo.midGame, new Move(5, 6));
+
 
     public static void main(String[] args) {
         System.out.println("This is a demonstration of minimax search on ultimate tic-tac-toe");
-
 
         // MAX players
         Player randomMax = new Player(MAX, new RandomAI());      // for random players depth is set to 1 automatically
@@ -57,11 +55,20 @@ public class MiniMaxDemo {
         Player mediumAiMin = new Player(MIN, new MediumAI(), 5);
         Player monteCarloMin = new Player(MIN, new MonteCarloAI(), 3);
 
-        BigBoard initialBoard = new BigBoard(mediumAiMax, randomMin);
-        playXGames(initialBoard, new AlphaBeta(), 1000, false);
+        // Boards
+        BigBoard initialBoard = new BigBoard(mediumAiMax, easyAiMin);
 
-        BigBoard initialBoard2 = new BigBoard(easyAiMax, randomMin);
-        playXGames(initialBoard2, new AlphaBeta(), 1000, false);
+        for (int i = 1; i <= 100; i++) {
+            gamePlay(initialBoard, new AlphaBeta(), false);
+            System.out.println(i);
+        }
+        System.out.println("----------------");
+        System.out.println("X won " + xWon);
+        System.out.println("O won " + oWon);
+        System.out.println("Draw " + draw);
+        System.out.println("----------------");
+
+
     }
 
     public static void gamePlay(State state, Search search, boolean print) {
@@ -70,7 +77,7 @@ public class MiniMaxDemo {
 
         while (!evaluationTest.isTerminal(state)) {
             Action nextAction = search
-                        .findStrategy(state, evaluationTest, state.getPlayer()).get(state);
+                    .findStrategy(state, evaluationTest, state.getPlayer()).get(state);
             state = state.getActionResult(nextAction);
 
             if (print) {
@@ -104,50 +111,6 @@ public class MiniMaxDemo {
         }
     }
 
-    public static void playXGames(BigBoard board, Search search, int X, boolean print) {
-        for (int i = 1; i <= X; i++) {
-            gamePlay(board, search, print);
-        }
-        System.out.println("----------------");
-        System.out.println("X won " + xWon);
-        System.out.println("O won " + oWon);
-        System.out.println("Draw " + draw);
-        System.out.println("----------------");
-
-        xWon = 0;
-        oWon = 0;
-        draw = 0;
-    }
-
-    // Mid-game state. 1 to do the next move in upper middle board.
-    // Last move was in the bottom mid-board's upper mid-cell [6, 4].
-    static int[][] midGame = {
-            {1, 0, 2, 0, 0, 0, 2, 0, 2},
-            {0, 0, 1, 1, 0, 0, 0, 1, 0},
-            {2, 0, 1, 0, 2, 2, 1, 1, 0},
-            {0, 1, 0, 2, 0, 1, 2, 1, 0},
-            {2, 0, 0, 2, 0, 1, 0, 0, 0},
-            {2, 1, 0, 0, 0, 0, 0, 0, 2},
-            {0, 2, 2, 1, 2, 0, 0, 0, 1},
-            {1, 0, 0, 0, 1, 2, 0, 2, 0},
-            {1, 0, 0, 0, 0, 0, 0, 2, 1}
-    };
-
-    // One Move Before winning state
-    // last move -> 0 2
-    // winning move -> 0,7
-    static int[][] oneMoveBeforeWinningState = {
-            {1, 0, 2, 0, 1, 0, 2, 0, 2},
-            {0, 2, 1, 1, 0, 0, 0, 1, 0},
-            {2, 0, 1, 2, 2, 2, 1, 1, 0},
-            {0, 1, 0, 2, 0, 1, 2, 1, 0},
-            {2, 0, 0, 2, 0, 1, 0, 0, 0},
-            {2, 1, 0, 0, 0, 1, 0, 0, 2},
-            {1, 2, 2, 1, 2, 0, 0, 2, 1},
-            {1, 0, 0, 0, 1, 2, 0, 2, 0},
-            {1, 0, 0, 0, 0, 0, 0, 2, 1}
-    };
-    //    BigBoard midGameBoard = new BigBoard(mediumAiMax, easyAiMin, midGame, new Move(6, 4));
-
+    // last move index 5, 6
 
 }
