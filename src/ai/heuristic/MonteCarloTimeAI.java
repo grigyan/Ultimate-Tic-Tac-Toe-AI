@@ -17,9 +17,9 @@ public class MonteCarloTimeAI implements StateEvaluationAi {
         double oWon = 0;
 
         long startTime = System.currentTimeMillis();
-        long duration = 5000;   // 5 seconds
-
-        while(System.currentTimeMillis() - startTime < duration) {
+        long duration = 50;   // 5 seconds
+        long endTime = startTime + duration;
+        while(System.currentTimeMillis() < endTime) {
             BigBoard copy = board;
             while(!evaluationTest.isTerminal(copy)) {
                 List<Action> applicableActions = copy.getApplicableActions();

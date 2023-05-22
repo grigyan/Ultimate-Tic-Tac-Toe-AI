@@ -27,17 +27,20 @@ public class MiniMaxDemo {
         // MAX players
         Player randomMax = new Player(MAX, new RandomAI());      // for random players depth is set to 1 automatically
         Player easyAiMax = new Player(MAX, new EasyAI(), 2);
-        Player mediumAiMax = new Player(MAX, new MediumAI(), 1);
+        Player mediumAiMax = new Player(MAX, new MediumAI(), 3);
+
         Player monteCarloMax = new Player(MAX, new MonteCarloAI(), 1);
+        Player monteCarloTimeMax = new Player(MAX, new MonteCarloTimeAI(), 1);
 
         // MIN players
         Player randomMin = new Player(MIN, new RandomAI());      // for random players depth is set to 1 automatically
-        Player easyAiMin = new Player(MIN, new EasyAI(), 6);
+        Player easyAiMin = new Player(MIN, new EasyAI(), 3);
         Player mediumAiMin = new Player(MIN, new MediumAI(), 1);
+
         Player monteCarloMin = new Player(MIN, new MonteCarloAI(), 1);
 
         // Boards
-        BigBoard initialBoard = new BigBoard(mediumAiMax, monteCarloMin);
+        BigBoard initialBoard = new BigBoard(mediumAiMax, easyAiMin);
 
         for (int i = 1; i <= 100; i++) {
             gamePlay(initialBoard, new AlphaBeta(), false);
