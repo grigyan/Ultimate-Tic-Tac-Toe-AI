@@ -27,7 +27,16 @@ Winning the game is the best case scenario
  */
 
 
-public class MediumAI implements StateEvaluationAi {
+/**
+ * Change Medium AI name to heur2 and easy ai name to heur1 +
+ * Explain why it works the best when it has depth 1 + (in paper)
+ * Provide alternative solution when having higher depth -> play to the moment that you have marks in all boards then AI takes over
+ * Make the first move to be the center square of the center board and interpret the results -
+ * Make new heur to have marks in all empty board then play with the medium ai -
+ * Test monte carlo with the web ai -
+ *
+ */
+public class Heur2 implements StateEvaluationAi {
     public static final int SMALL_BOARD_WIN = 10;
     public static final int CENTER_BOARD_WIN = 100;
     public static final int CORNER_BOARD_WIN = 40;
@@ -40,6 +49,10 @@ public class MediumAI implements StateEvaluationAi {
         int topPlayer = board.getPlayer().getPlayerEnum() == PlayerEnum.MIN ? 1 : 2;
         int opponent = topPlayer == 1 ? 2 : 1;
         int score = 0;
+
+        if (board.getGrid()[4][4] == EMPTY && board.getLastMove().getColumn() == 4 && board.getLastMove().getRow() == 4) {
+            score += 1000;
+        }
 
         if (board.isSilhouetteWon()) {
             return topPlayer == 1 ? Integer.MAX_VALUE : Integer.MIN_VALUE;

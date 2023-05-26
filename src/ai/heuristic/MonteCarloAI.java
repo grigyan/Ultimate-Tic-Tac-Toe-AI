@@ -10,7 +10,7 @@ import java.util.Random;
 
 public class MonteCarloAI implements StateEvaluationAi {
 
-    int numberOfGames = 100;
+    int numberOfGames = 200;
     BigBoardEvaluationTest evaluationTest = new BigBoardEvaluationTest();
     Random random = new Random();
 

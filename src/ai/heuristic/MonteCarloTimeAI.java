@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Random;
 
 public class MonteCarloTimeAI implements StateEvaluationAi {
+    int numberOfGames = 100;
     BigBoardEvaluationTest evaluationTest = new BigBoardEvaluationTest();
     Random random = new Random();
 
@@ -15,11 +16,7 @@ public class MonteCarloTimeAI implements StateEvaluationAi {
     public int evaluateBoardAfterLastMove(BigBoard board) {
         double xWon = 0;
         double oWon = 0;
-
-        long startTime = System.currentTimeMillis();
-        long duration = 50;   // 5 seconds
-        long endTime = startTime + duration;
-        while(System.currentTimeMillis() < endTime) {
+        for (int i = 1; i <= numberOfGames; i++) {
             BigBoard copy = board;
             while(!evaluationTest.isTerminal(copy)) {
                 List<Action> applicableActions = copy.getApplicableActions();

@@ -22,6 +22,8 @@ public class Player {
         depthLimit = 1;
     }
 
+    public Player() {}
+
     public StateEvaluationAi getStateEvaluationAi() {
         return stateEvaluationAi;
     }

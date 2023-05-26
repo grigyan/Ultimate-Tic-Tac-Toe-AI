@@ -16,7 +16,7 @@ Easy AI Logic:
  */
 
 
-public class EasyAI implements StateEvaluationAi {
+public class Heur1 implements StateEvaluationAi {
 
     @Override
     public int evaluateBoardAfterLastMove(BigBoard board) {
